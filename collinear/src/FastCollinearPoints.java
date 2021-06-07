@@ -1,14 +1,14 @@
 import java.util.Arrays;
-import edu.princeton.cs.algs4.Queue;
+import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private int count;
-    private LineSegment[] result;
-    private Queue<LineSegment> store;
+    private LineSegment[] seg;
+    private ArrayList<LineSegment> foundSeg = new ArrayList<>();
     public FastCollinearPoints(Point[] points) {
         if (points == null) {
             throw new IllegalArgumentException();
         }
+
         for (int i = 0; i < points.length; i++) {
             if (points[i] == null) {
                 throw new IllegalArgumentException();
@@ -19,49 +19,63 @@ public class FastCollinearPoints {
                 }
             }
         }
-        store = new Queue<>();
-        count = 0;
-        for (int i = 0; i < points.length - 3; i++) {
-            Point[] temp = new Point[points.length - 1 - i];
-            System.arraycopy(points, i, temp, 0, points.length - 1 - i);
-            Arrays.sort(temp, points[i].slopeOrder());
-            for (int j = 3; j < temp.length; j++) {
-                if (temp[j].slopeTo(temp[j - 1]) == temp[j].slopeTo(temp[j - 2])) {
-                    if (temp[j].slopeTo(temp[j - 3]) == temp[j].slopeTo(temp[j - 1])) {
-                        int record = j;
-                        int number = 0;
-                        if (temp[j + 1] != null) {
-                            number += 1;
-                            while (temp[record].slopeTo(temp[record + number])
-                                    == temp[record].slopeTo(temp[record - 1])) {
-                                j += 1;
-                                number += 1;
+
+        Point[] pointsCopy = Arrays.copyOf(points, points.length);
+        Arrays.sort(pointsCopy);
+
+        for (int n = 0; n < pointsCopy.length - 3; n++) {
+            Point bP = pointsCopy[n];
+            Point[] nextPoints = new Point[ pointsCopy.length - n - 1];
+            for (int m = 0; m < nextPoints.length; m++) {
+                nextPoints[m] = pointsCopy[n + 1 + m];
+            }
+            Arrays.sort(nextPoints, bP.slopeOrder());
+            int count = 0;
+            double bSlope = Double.NEGATIVE_INFINITY;
+            for (int i = 0; i < nextPoints.length; i++) {
+                double nSlope = bP.slopeTo(nextPoints[i]);
+                if (bSlope != nSlope || i == nextPoints.length - 1) {
+                    if (bSlope == nSlope) {
+                        count++;
+                    }
+                    if (count >= 3) {
+                        boolean added = false;
+                        for (int m = 0; m < n; m++) {
+                            if (bP.slopeTo(pointsCopy[m]) == bSlope) {
+                                added = true;
                             }
                         }
-                        if (number > 0) {
-                            number = number - 1;
+
+                        if (!added) {
+                            int lastIndex = bSlope != nSlope ? i - 1 : i;
+                            LineSegment nSeg = new LineSegment(bP, nextPoints[lastIndex]);
+                            this.addNewSeg(nSeg);
                         }
-                        count += 1;
-                        store.enqueue(new LineSegment(points[record - 3], points[record + number]));
                     }
+                    count = 1;
+                    bSlope = nSlope;
+
                 } else {
-                    break;
+                    count++;
                 }
             }
+        }
+
+        seg = foundSeg.toArray(new LineSegment[ foundSeg.size()]);
+    }
+
+    private void addNewSeg(LineSegment nSeg) {
+        boolean isAdd = true;
+        if (isAdd) {
+            foundSeg.add(nSeg);
         }
     }
 
     public int numberOfSegments() {
-        return count;
+        return this.seg.length;
     }
 
     public LineSegment[] segments() {
-        result = new LineSegment[count];
-        int number = 0;
-        while (!store.isEmpty()) {
-            result[number] = store.dequeue();
-            number += 1;
-        }
-        return result;
+        return Arrays.copyOf(seg, seg.length);
     }
 }
