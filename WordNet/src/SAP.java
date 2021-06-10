@@ -2,11 +2,9 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
-import java.util.ArrayList;
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 public class SAP {
     private Digraph graph;
-    private final int root = 38003;
     private int min_V = -1;
     private int min_W = -1;
     public SAP(Digraph G) {
@@ -22,16 +20,17 @@ public class SAP {
         }
         BreadthFirstDirectedPaths bfsv = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths bfsw = new BreadthFirstDirectedPaths(graph, w);
-        if (!bfsv.hasPathTo(root) || !bfsw.hasPathTo(root)) {
-            return -1;
+        int max = Integer.MAX_VALUE;
+        for (int i = 0; i < graph.V(); i++) {
+            if (!bfsv.hasPathTo(i) || !bfsw.hasPathTo(i)) {
+                return -1;
+            }
+            int temp = bfsv.distTo(i) + bfsw.distTo(i);
+            if (temp < max) {
+                max = temp;
+            }
         }
-        ArrayList<Integer> tempv = new ArrayList<>();
-        ArrayList<Integer> tempw = new ArrayList<>();
-        bfsv.pathTo(root).forEach(tempv :: add);
-        bfsw.pathTo(root).forEach(tempw :: add);
-        tempv.retainAll(tempw);
-        int firstcommon = tempv.get(0);
-        return bfsv.distTo(firstcommon) + bfsw.distTo(firstcommon);
+        return max;
     }
 
     public int ancestor(int v, int w) {
@@ -40,15 +39,19 @@ public class SAP {
         }
         BreadthFirstDirectedPaths bfsv = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths bfsw = new BreadthFirstDirectedPaths(graph, w);
-        if (!bfsv.hasPathTo(root) || !bfsw.hasPathTo(root)) {
-            return -1;
+        int max = Integer.MAX_VALUE;
+        int ancestor = -1;
+        for (int i = 0; i < graph.V(); i++) {
+            if (!bfsv.hasPathTo(i) || !bfsw.hasPathTo(i)) {
+                return -1;
+            }
+            int temp = bfsv.distTo(i) + bfsw.distTo(i);
+            if (temp < max) {
+                max = temp;
+                ancestor = i;
+            }
         }
-        ArrayList<Integer> tempv = new ArrayList<>();
-        ArrayList<Integer> tempw = new ArrayList<>();
-        bfsv.pathTo(root).forEach(tempv :: add);
-        bfsw.pathTo(root).forEach(tempw :: add);
-        tempv.retainAll(tempw);
-        return tempv.get(0);
+        return ancestor;
     }
 
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
