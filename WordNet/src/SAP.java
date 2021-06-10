@@ -23,12 +23,15 @@ public class SAP {
         int max = Integer.MAX_VALUE;
         for (int i = 0; i < graph.V(); i++) {
             if (!bfsv.hasPathTo(i) || !bfsw.hasPathTo(i)) {
-                return -1;
+                continue;
             }
             int temp = bfsv.distTo(i) + bfsw.distTo(i);
             if (temp < max) {
                 max = temp;
             }
+        }
+        if (max == Integer.MAX_VALUE) {
+            return -1;
         }
         return max;
     }
@@ -43,7 +46,7 @@ public class SAP {
         int ancestor = -1;
         for (int i = 0; i < graph.V(); i++) {
             if (!bfsv.hasPathTo(i) || !bfsw.hasPathTo(i)) {
-                return -1;
+                continue;
             }
             int temp = bfsv.distTo(i) + bfsw.distTo(i);
             if (temp < max) {
@@ -51,10 +54,16 @@ public class SAP {
                 ancestor = i;
             }
         }
+        if (max == Integer.MAX_VALUE) {
+            return -1;
+        }
         return ancestor;
     }
 
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        if (v == null || w == null) {
+            throw new IllegalArgumentException();
+        }
         Integer min = Integer.MAX_VALUE;
         for (Integer i : v) {
             for (Integer j : w) {
@@ -76,6 +85,9 @@ public class SAP {
     }
 
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        if (v == null || w == null) {
+            throw new IllegalArgumentException();
+        }
         int temp = length(v, w);
         if (temp == -1) {
             return temp;

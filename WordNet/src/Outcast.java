@@ -13,7 +13,7 @@ public class Outcast {
         if (nouns == null) {
             throw new IllegalArgumentException();
         }
-        int best = Integer.MAX_VALUE;
+        int best = Integer.MIN_VALUE;
         String result = null;
         for (String i : nouns) {
             int temp = 0;
@@ -23,7 +23,7 @@ public class Outcast {
                 }
                 temp += wordnet.distance(i, j);
             }
-            if (temp < best) {
+            if (temp > best) {
                 best = temp;
                 result = i;
             }
