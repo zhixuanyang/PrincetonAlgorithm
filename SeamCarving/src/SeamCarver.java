@@ -30,6 +30,9 @@ public class SeamCarver {
         if (x >= width || x < 0 || y >= height || y < 0) {
             throw new IllegalArgumentException();
         }
+        if (x == 0 || x == width() - 1 || y == 0 || y == height() - 1) {
+            return 1000.0;
+        }
         Color up, down, left, right;
         if (isVertical) {
             up = y > 0 ? picture.get(x, y - 1) : picture.get(x, height - 1);
@@ -48,7 +51,7 @@ public class SeamCarver {
         int ry = up.getRed() - down.getRed();
         int gy = up.getGreen() - down.getGreen();
         int by = up.getBlue() - down.getBlue();
-        return rx * rx + gx * gx + bx * bx + ry * ry + gy * gy + by * by;
+        return Math.sqrt(rx * rx + gx * gx + bx * bx + ry * ry + gy * gy + by * by);
     }
 
     public int[] findHorizontalSeam() {
