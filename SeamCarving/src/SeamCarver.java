@@ -128,39 +128,39 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null || seam.length != width()) {
-            throw new IllegalArgumentException();
-        }
-        for (int i = 0; i < seam.length; i++) {
-            if (seam[i] < 0 || seam[i] > height() - 1) {
-                throw new java.lang.IllegalArgumentException();
-            }
-            if (i != seam.length - 1 && (seam[i] - seam[i + 1] > 1 || seam[i] - seam[i + 1] < -1)) {
-                throw new java.lang.IllegalArgumentException();
-            }
-        }
-        if (height() <= 1) {
-            throw new java.lang.IllegalArgumentException();
-        }
-        removeHorizontalSeam(picture, seam);
-    }
-
-    public void removeVerticalSeam(int[] seam) {
         if (seam == null || seam.length != height()) {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < seam.length; i++) {
-            if (seam[i] < 0 || seam[i] > width() - 1) {
-                throw new java.lang.IllegalArgumentException();
+            if (seam[i] < 0 || seam[i] > height() - 1) {
+                throw new IllegalArgumentException();
             }
             if (i != seam.length - 1 && (seam[i] - seam[i + 1] > 1 || seam[i] - seam[i + 1] < -1)) {
-                throw new java.lang.IllegalArgumentException();
+                throw new IllegalArgumentException();
+            }
+        }
+        if (height() <= 1) {
+            throw new IllegalArgumentException();
+        }
+        this.picture = removeHorizontalSeam(picture, seam);
+    }
+
+    public void removeVerticalSeam(int[] seam) {
+        if (seam == null || seam.length != width()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < seam.length; i++) {
+            if (seam[i] < 0 || seam[i] > width() - 1) {
+                throw new IllegalArgumentException();
+            }
+            if (i != seam.length - 1 && (seam[i] - seam[i + 1] > 1 || seam[i] - seam[i + 1] < -1)) {
+                throw new IllegalArgumentException();
             }
         }
         if (width() <= 1) {
-            throw new java.lang.IllegalArgumentException();
+            throw new IllegalArgumentException();
         }
-        removeVerticalSeam(picture, seam);
+        this.picture = removeVerticalSeam(picture, seam);
     }
     private Picture removeHorizontalSeam(Picture var0, int[] var1) {
         if (var1 == null) {
