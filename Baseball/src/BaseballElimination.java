@@ -6,19 +6,23 @@ import edu.princeton.cs.algs4.FordFulkerson;
 import java.util.HashMap;
 import java.util.Map;
 public class BaseballElimination {
-
     private int size;
     private int[] wins;
     private int[] loses;
     private int[] remaining;
+    private int high;
     private int[][] eachother;
     private Map<String, Integer> teamlist;
+    private FordFulkerson alog;
+    private FlowEdge edge;
+    private FlowNetwork network;
     public BaseballElimination(String filename) {
         if (filename == null) {
             throw new IllegalArgumentException();
         }
         In input = new In(filename);
         size = input.readInt();
+        high = 0;
         teamlist = new HashMap<>();
         wins = new int[size];
         loses = new int[size];
@@ -28,6 +32,9 @@ public class BaseballElimination {
             String name = input.readString();
             teamlist.put(name, i);
             wins[i] = input.readInt();
+            if (wins[i] > high) {
+                high = wins[i];
+            }
             loses[i] = input.readInt();
             remaining[i] = input.readInt();
             for (int j = 0; j < size; j++) {
@@ -75,12 +82,30 @@ public class BaseballElimination {
     }
 
     public boolean isEliminated(String team) {
-        if (team == null) {
+        if (team == null || !teamlist.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return false;
+        int temp = teamlist.get(team);
+        if (wins[temp] + remaining[temp] < high) {
+            return false;
+        } else {
+            return ffalog(temp);
+        }
     }
 
+    private boolean ffalog(int team) {
+        int totalgame = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (i == team || j == team) {
+                    continue;
+                }
+                totalgame += 1;
+            }
+        }
+        network = new FlowNetwork(2 + size - 1 + totalgame);
+        return true;
+    }
     public Iterable<String> certificateOfElimination(String team) {
         if (team == null) {
             throw new IllegalArgumentException();
@@ -89,7 +114,7 @@ public class BaseballElimination {
     }
 
     public static void main(String[] args) {
-        BaseballElimination division = new BaseballElimination("teams5.txt");
+        /*BaseballElimination division = new BaseballElimination("teams5.txt");
         for (String team : division.teams()) {
             if (division.isEliminated(team)) {
                 StdOut.print(team + " is eliminated by the subset R = { ");
@@ -100,6 +125,6 @@ public class BaseballElimination {
             } else {
                 StdOut.println(team + " is not eliminated");
             }
-        }
+        }*/
     }
 }
