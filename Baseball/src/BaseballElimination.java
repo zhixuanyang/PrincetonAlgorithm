@@ -100,7 +100,7 @@ public class BaseballElimination {
             }
         }
         if (marked) {
-            return false;
+            return true;
         } else {
             return ffalog(temp);
         }
@@ -141,12 +141,12 @@ public class BaseballElimination {
                     wins[team] + remaining[team] - wins[i]);
             network.addEdge(third);
         }
-        alog = new FordFulkerson(network, team, 2 + size + tempsize);
+        alog = new FordFulkerson(network, 0, 1 + size + tempsize);
         return !(total == (int) alog.value());
     }
 
     private int calculate(int n) {
-        if (n == 1) {
+        if (n == 1 || n < 1) {
             return 1;
         } else {
             return n + calculate(n - 1);
