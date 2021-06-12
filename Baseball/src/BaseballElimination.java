@@ -159,13 +159,15 @@ public class BaseballElimination {
         if (!isEliminated(team)) {
             return null;
         } else {
-            for (String name : teamlist.keySet()) {
-                if (name == team) {
-                    continue;
-                }
-                int id = teamlist.get(name);
-                if (alog.inCut(id)) {
-                    result.add(name);
+            if (!marked) {
+                for (String name : teamlist.keySet()) {
+                    if (name == team) {
+                        continue;
+                    }
+                    int id = teamlist.get(name);
+                    if (alog.inCut(id)) {
+                        result.add(name);
+                    }
                 }
             }
         }
