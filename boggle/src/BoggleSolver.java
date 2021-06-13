@@ -96,7 +96,7 @@ public class BoggleSolver {
         }
         List<String> result = new ArrayList<>();
         for (int i = 0; i < board.rows(); i++) {
-            for (int j = 0; j < board.cols(); i++) {
+            for (int j = 0; j < board.cols(); j++) {
                 String prefix = getSuffix(board, i, j);
                 Node node = trie.get(trie.root, prefix, 0);
                 boolean[] visited = new boolean[board.rows() * board.cols()];
