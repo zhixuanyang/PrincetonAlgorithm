@@ -139,7 +139,7 @@ public class BoggleSolver {
                 }
             }
         }
-        visited[x * board.cols() + y] = true;
+        visited[x * board.cols() + y] = false;
     }
 
     public int scoreOf(String word) {
@@ -161,7 +161,6 @@ public class BoggleSolver {
                 return 5;
             default:
                 return 11;
-
         }
     }
 }
