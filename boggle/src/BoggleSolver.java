@@ -1,4 +1,9 @@
 import edu.princeton.cs.algs4.StdRandom;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+
 public class BoggleSolver {
 
     private class Node {
@@ -82,6 +87,81 @@ public class BoggleSolver {
         StdRandom.shuffle(dic);
         for (String e : dic) {
             trie.add(e);
+        }
+    }
+
+    public Iterable<String> getAllValidWords(BoggleBoard board) {
+        if (board == null) {
+            throw new IllegalArgumentException();
+        }
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < board.rows(); i++) {
+            for (int j = 0; j < board.cols(); i++) {
+                String prefix = getSuffix(board, i, j);
+                Node node = trie.get(trie.root, prefix, 0);
+                boolean[] visited = new boolean[board.rows() * board.cols()];
+                if (node != null) {
+                    exploreBoard(result, board, i, j, visited, node);
+                }
+            }
+        }
+        List<String> sorted = new ArrayList<>(new HashSet<>(result));
+        Collections.sort(sorted);
+        return sorted;
+    }
+
+    private String getSuffix(BoggleBoard board, int i, int j) {
+        char letter = board.getLetter(i, j);
+        if (letter == 'Q') {
+            return "Qu";
+        } else {
+            return String.valueOf(letter);
+        }
+    }
+
+    private void exploreBoard(List<String> words,
+                              BoggleBoard board, int x, int y,
+                              boolean[] visited, Node node) {
+        String v = node.value;
+        if (v != null && v.length() >= 3) {
+            words.add(v);
+        }
+        visited[x * board.cols() + y] = true;
+        for (int i = Math.max(0, x - 1); i <= Math.min(x + 1, board.rows() - 1); i++) {
+            for (int j = Math.max(0, y - 1); j <= Math.min(y + 1, board.cols() - 1); j++) {
+                if (visited[i * board.cols() + j]) {
+                    continue;
+                }
+                String suffix = getSuffix(board, i, j);
+                Node next = trie.get(node.mid, suffix, 0);
+                if (next != null) {
+                    exploreBoard(words, board, i, j, visited, next);
+                }
+            }
+        }
+        visited[x * board.cols() + y] = true;
+    }
+
+    public int scoreOf(String word) {
+        if (word == null) {
+            throw new IllegalArgumentException();
+        }
+        if (word.length() <= 2 || !trie.contains(word)) {
+            return 0;
+        }
+        switch (word.length()) {
+            case 3:
+            case 4:
+                return 1;
+            case 5:
+                return 2;
+            case 6:
+                return 3;
+            case 7:
+                return 5;
+            default:
+                return 11;
+
         }
     }
 }
